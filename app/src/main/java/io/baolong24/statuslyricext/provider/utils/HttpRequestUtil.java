@@ -1,4 +1,4 @@
-package io.cjybyjk.statuslyricext.provider.utils;
+package io.baolong24.statuslyricext.provider.utils;
 
 import android.text.TextUtils;
 

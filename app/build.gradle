@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "io.cjybyjk.statuslyricext"
+        applicationId "io.baolong24.statuslyricext"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 3

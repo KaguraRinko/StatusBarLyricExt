@@ -1,4 +1,4 @@
-package io.cjybyjk.statuslyricext;
+package io.baolong24.statuslyricext;
 
 import org.junit.Test;
 

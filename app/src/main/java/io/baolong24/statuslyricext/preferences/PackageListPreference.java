@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.cjybyjk.statuslyricext.preferences;
+package io.baolong24.statuslyricext.preferences;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -32,9 +32,9 @@ import androidx.preference.PreferenceCategory;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import io.cjybyjk.statuslyricext.R;
-import io.cjybyjk.statuslyricext.misc.Constants;
-import io.cjybyjk.statuslyricext.preferences.PackageListAdapter.PackageItem;
+import io.baolong24.statuslyricext.R;
+import io.baolong24.statuslyricext.misc.Constants;
+import io.baolong24.statuslyricext.preferences.PackageListAdapter.PackageItem;
 
 public class PackageListPreference extends PreferenceCategory implements
         Preference.OnPreferenceClickListener {

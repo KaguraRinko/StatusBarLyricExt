@@ -1,4 +1,4 @@
-package io.cjybyjk.statuslyricext;
+package io.baolong24.statuslyricext;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -22,7 +22,7 @@ import androidx.preference.SwitchPreference;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.cjybyjk.statuslyricext.misc.Constants;
+import io.baolong24.statuslyricext.misc.Constants;
 
 public class SettingsActivity extends FragmentActivity {
 
@@ -44,7 +44,7 @@ public class SettingsActivity extends FragmentActivity {
 
 
         // add urls
-        mUrlMap.put("app", "https://github.com/cjybyjk/StatusBarLyricExt");
+        mUrlMap.put("app", "https://github.com/baolong24/StatusBarLyricExt");
         mUrlMap.put("lyricview", "https://github.com/markzhai/LyricView");
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {

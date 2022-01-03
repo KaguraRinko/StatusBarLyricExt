@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.cjybyjk.statuslyricext.preferences;
+package io.baolong24.statuslyricext.preferences;
 
 import android.content.Context;
 import android.content.Intent;
@@ -38,7 +38,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
-import io.cjybyjk.statuslyricext.R;
+import io.baolong24.statuslyricext.R;
 
 public class PackageListAdapter extends BaseAdapter implements Runnable {
     private final PackageManager mPm;

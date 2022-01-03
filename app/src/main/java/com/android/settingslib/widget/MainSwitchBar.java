@@ -36,7 +36,7 @@ import com.android.settingslib.utils.BuildCompatUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.cjybyjk.statuslyricext.R;
+import io.baolong24.statuslyricext.R;
 
 /**
  * MainSwitchBar is a View with a customized Switch.
