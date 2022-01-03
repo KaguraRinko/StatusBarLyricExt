@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">StatusBarLyricExt</string>
+    <string name="app_name">状态栏歌词扩展</string>
     <string name="about_header">关于</string>
     <string name="preferences_header">设置</string>
     <string name="profile_choose_app">选择应用</string>

@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.widget.Toolbar;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.Preference;
@@ -30,13 +31,17 @@ public class SettingsActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings_activity);
+        setContentView(R.layout.collapsing_toolbar_base_layout);
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.settings, new SettingsFragment())
+                    .replace(R.id.content_frame, new SettingsFragment())
                     .commit();
         }
+
+        Toolbar collapsingToolbar = findViewById(R.id.action_bar);
+        setActionBar(collapsingToolbar);
+
 
         // add urls
         mUrlMap.put("app", "https://github.com/cjybyjk/StatusBarLyricExt");
