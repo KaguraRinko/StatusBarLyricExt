@@ -3,6 +3,8 @@ package io.baolong24.statuslyricext.provider.utils;
 import android.media.MediaMetadata;
 import android.text.TextUtils;
 
+import com.github.houbb.opencc4j.util.ZhConverterUtil;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -19,6 +21,17 @@ public class LyricSearchUtil {
         String album = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM);
         String artist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
         String ret;
+
+        if (ZhConverterUtil.isTraditional(title)) {
+            title = ZhConverterUtil.toSimple(title);
+        }
+        if (ZhConverterUtil.isTraditional(artist)) {
+            artist = ZhConverterUtil.toSimple(artist);
+        }
+        if (ZhConverterUtil.isTraditional(album)) {
+            album = ZhConverterUtil.toSimple(album);
+        }
+
         if (!TextUtils.isEmpty(artist)) {
             ret = artist + "-" + title;
         } else if (!TextUtils.isEmpty(album)) {
@@ -51,6 +64,17 @@ public class LyricSearchUtil {
         String realTitle = metadata.getString(MediaMetadata.METADATA_KEY_TITLE);
         String realArtist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
         String realAlbum = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM);
+
+        if (ZhConverterUtil.isTraditional(realTitle)) {
+            realTitle = ZhConverterUtil.toSimple(realTitle);
+        }
+        if (ZhConverterUtil.isTraditional(realArtist)) {
+            realArtist = ZhConverterUtil.toSimple(realArtist);
+        }
+        if (ZhConverterUtil.isTraditional(realAlbum)) {
+            realAlbum = ZhConverterUtil.toSimple(realAlbum);
+        }
+
         if (!realTitle.contains(title) && !title.contains(realTitle) || TextUtils.isEmpty(title)) {
             return 10000;
         }

@@ -38,6 +38,7 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation group: 'com.github.houbb', name: 'opencc4j', version: '1.7.1'
 }
 repositories {
     mavenCentral()
