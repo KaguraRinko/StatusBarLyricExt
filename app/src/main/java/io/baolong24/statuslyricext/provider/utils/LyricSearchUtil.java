@@ -12,6 +12,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.regex.Pattern;
 
+import io.baolong24.statuslyricext.misc.checkStringLang;
+
 public class LyricSearchUtil {
 
     private static final Pattern LyricContentPattern = Pattern.compile("(\\[\\d\\d:\\d\\d\\.\\d{0,3}]|\\[\\d\\d:\\d\\d])[^\\r\\n]");
@@ -23,13 +25,16 @@ public class LyricSearchUtil {
         String ret;
 
         if (ZhConverterUtil.isTraditional(title)) {
-            title = ZhConverterUtil.toSimple(title);
+            if (!(checkStringLang.isJapenese(title)))
+                title = ZhConverterUtil.toSimple(title);
         }
         if (ZhConverterUtil.isTraditional(artist)) {
-            artist = ZhConverterUtil.toSimple(artist);
+            if (!(checkStringLang.isJapenese(artist)))
+                artist = ZhConverterUtil.toSimple(artist);
         }
         if (ZhConverterUtil.isTraditional(album)) {
-            album = ZhConverterUtil.toSimple(album);
+            if (!(checkStringLang.isJapenese(album)))
+                album = ZhConverterUtil.toSimple(album);
         }
 
         if (!TextUtils.isEmpty(artist)) {
@@ -66,13 +71,16 @@ public class LyricSearchUtil {
         String realAlbum = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM);
 
         if (ZhConverterUtil.isTraditional(realTitle)) {
-            realTitle = ZhConverterUtil.toSimple(realTitle);
+            if (!(checkStringLang.isJapenese(realTitle)))
+                realTitle = ZhConverterUtil.toSimple(realTitle);
         }
         if (ZhConverterUtil.isTraditional(realArtist)) {
-            realArtist = ZhConverterUtil.toSimple(realArtist);
+            if (!(checkStringLang.isJapenese(realArtist)))
+                realArtist = ZhConverterUtil.toSimple(realArtist);
         }
         if (ZhConverterUtil.isTraditional(realAlbum)) {
-            realAlbum = ZhConverterUtil.toSimple(realAlbum);
+            if (!(checkStringLang.isJapenese(realAlbum)))
+                realAlbum = ZhConverterUtil.toSimple(realAlbum);
         }
 
         if (!realTitle.contains(title) && !title.contains(realTitle) || TextUtils.isEmpty(title)) {
