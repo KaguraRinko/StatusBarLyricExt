@@ -12,4 +12,5 @@
     <string name="unsupport_rom">当前系统或 ROM 不被支持</string>
     <string name="unsupport_evolution">基于 Android 12 的 Evolution X 暂不支持状态栏歌词</string>
     <string name="unsupport">不支持</string>
+    <string name="enabled_xposed_title">启用 (Xposed)</string>
 </resources>

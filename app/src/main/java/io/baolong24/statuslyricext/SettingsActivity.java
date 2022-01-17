@@ -23,6 +23,8 @@ import androidx.preference.SwitchPreference;
 import java.util.HashMap;
 import java.util.Map;
 
+import StatusBarLyric.API.StatusBarLyric;
+
 import io.baolong24.statuslyricext.misc.Constants;
 import io.baolong24.statuslyricext.misc.RomUtils;
 
@@ -91,11 +93,14 @@ public class SettingsActivity extends FragmentActivity {
     public static class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
 
         private SwitchPreference mEnabledPreference;
+        private SwitchPreference mEnabledXposedPreference;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
             mEnabledPreference = findPreference(Constants.PREFERENCE_KEY_ENABLED);
+            mEnabledXposedPreference = findPreference(Constants.PREFERENCE_KEY_ENABLED_XPOSED);
+            mEnabledXposedPreference.setVisible(false);
             if (!(RomUtils.checkIsMeizuRom() || RomUtils.checkIsbaolong24Rom() || RomUtils.checkIsexTHmUIRom())) {
                 mEnabledPreference.setEnabled(false);
                 mEnabledPreference.setTitle(R.string.unsupport);
@@ -106,9 +111,15 @@ public class SettingsActivity extends FragmentActivity {
                 mEnabledPreference.setTitle(R.string.unsupport);
                 mEnabledPreference.setSummary(R.string.unsupport_evolution);
             }
-            if (mEnabledPreference != null) {
+            if (new StatusBarLyric(getContext(), null, "io.baolong24.statuslyricext", false).hasEnable()) {
+                mEnabledPreference.setVisible(false);
+                mEnabledXposedPreference.setVisible(true);
+            }
+            if (mEnabledPreference != null || mEnabledXposedPreference != null) {
                 mEnabledPreference.setChecked(isNotificationListenerEnabled(getContext()));
                 mEnabledPreference.setOnPreferenceClickListener(this);
+                mEnabledXposedPreference.setChecked(isNotificationListenerEnabled(getContext()));
+                mEnabledXposedPreference.setOnPreferenceClickListener(this);
             }
             Preference appInfoPreference = findPreference("app");
             if (appInfoPreference != null) {
@@ -126,14 +137,15 @@ public class SettingsActivity extends FragmentActivity {
         @Override
         public void onResume() {
             super.onResume();
-            if (mEnabledPreference != null) {
+            if (mEnabledPreference != null || mEnabledXposedPreference != null) {
                 mEnabledPreference.setChecked(isNotificationListenerEnabled(getContext()));
+                mEnabledXposedPreference.setChecked(isNotificationListenerEnabled(getContext()));
             }
         }
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-            if (preference == mEnabledPreference) {
+            if (preference == mEnabledPreference || preference == mEnabledXposedPreference) {
                 startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
             } else {
                 String url = mUrlMap.get(preference.getKey());
