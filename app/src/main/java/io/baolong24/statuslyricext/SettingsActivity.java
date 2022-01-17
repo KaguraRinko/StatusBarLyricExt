@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.baolong24.statuslyricext.misc.Constants;
+import io.baolong24.statuslyricext.misc.RomUtils;
 
 public class SettingsActivity extends FragmentActivity {
 
@@ -94,6 +96,16 @@ public class SettingsActivity extends FragmentActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
             mEnabledPreference = findPreference(Constants.PREFERENCE_KEY_ENABLED);
+            if (!(RomUtils.checkIsMeizuRom() || RomUtils.checkIsbaolong24Rom() || RomUtils.checkIsexTHmUIRom())) {
+                mEnabledPreference.setEnabled(false);
+                mEnabledPreference.setTitle(R.string.unsupport);
+                mEnabledPreference.setSummary(R.string.unsupport_rom);
+            }
+            if (RomUtils.checkIsEvolutionRom() && Build.VERSION.RELEASE.equals("12")) {
+                mEnabledPreference.setEnabled(false);
+                mEnabledPreference.setTitle(R.string.unsupport);
+                mEnabledPreference.setSummary(R.string.unsupport_evolution);
+            }
             if (mEnabledPreference != null) {
                 mEnabledPreference.setChecked(isNotificationListenerEnabled(getContext()));
                 mEnabledPreference.setOnPreferenceClickListener(this);
