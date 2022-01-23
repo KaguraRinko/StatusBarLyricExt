@@ -50,7 +50,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation group: 'com.github.houbb', name: 'opencc4j', version: '1.7.1'
     implementation group: 'io.github.kju2.languagedetector', name: 'language-detector', version: '1.0.5'
-
+    implementation 'com.github.577fkj:StatusBarApiExample:v2.0'
 }
 repositories {
     mavenCentral()

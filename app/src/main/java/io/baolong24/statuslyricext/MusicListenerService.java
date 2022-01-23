@@ -1,5 +1,6 @@
 package io.baolong24.statuslyricext;
 
+import StatusBarLyric.API.StatusBarLyric;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -19,30 +20,27 @@ import android.os.Message;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
-
+import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import cn.zhaiyifan.lyric.LyricUtils;
 import cn.zhaiyifan.lyric.model.Lyric;
 import io.baolong24.statuslyricext.misc.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MusicListenerService extends NotificationListenerService {
 
     private static final int NOTIFICATION_ID_LRC = 1;
 
     private static final int MSG_LYRIC_UPDATE_DONE = 2;
-
+    private final ArrayList<String> mIgnoredPackageList = new ArrayList<>();
     private MediaSessionManager mMediaSessionManager;
     private MediaController mMediaController;
     private NotificationManager mNotificationManager;
-
-    private final ArrayList<String> mIgnoredPackageList = new ArrayList<>();
     private SharedPreferences mSharedPreferences;
 
     private Lyric mLyric;
@@ -50,7 +48,18 @@ public class MusicListenerService extends NotificationListenerService {
     private Notification mLyricNotification;
     private long mLastSentenceFromTime = -1;
 
-    private final BroadcastReceiver mIgnoredPackageReceiver = new BroadcastReceiver() {
+    public MusicListenerService() {
+    }
+
+    private int getMediaControllerPlaybackState(MediaController controller) {
+        if (controller != null) {
+            final PlaybackState playbackState = controller.getPlaybackState();
+            if (playbackState != null) {
+                return playbackState.getState();
+            }
+        }
+        return PlaybackState.STATE_NONE;
+    }    private final BroadcastReceiver mIgnoredPackageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Constants.BROADCAST_IGNORED_APP_CHANGED)) {
@@ -61,7 +70,13 @@ public class MusicListenerService extends NotificationListenerService {
         }
     };
 
-    private final Handler mHandler = new Handler(Looper.myLooper()) {
+    @Override
+    public void onNotificationPosted(StatusBarNotification sbn) {
+    }
+
+    @Override
+    public void onNotificationRemoved(StatusBarNotification sbn) {
+    }    private final Handler mHandler = new Handler(Looper.myLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -72,7 +87,25 @@ public class MusicListenerService extends NotificationListenerService {
         }
     };
 
-    private final Runnable mLyricUpdateRunnable = new Runnable() {
+    @Override
+    public void onListenerConnected() {
+        super.onListenerConnected();
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mLyricNotification = buildLrcNotification();
+        mMediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mIgnoredPackageReceiver, new IntentFilter(Constants.BROADCAST_IGNORED_APP_CHANGED));
+        updateIgnoredPackageList();
+        bindMediaListeners();
+    }
+
+    @Override
+    public void onListenerDisconnected() {
+        stopLyric();
+        unBindMediaListeners();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mIgnoredPackageReceiver);
+        super.onListenerDisconnected();
+    }    private final Runnable mLyricUpdateRunnable = new Runnable() {
         @Override
         public void run() {
             if (mMediaController == null || mMediaController.getPlaybackState().getState() != PlaybackState.STATE_PLAYING) {
@@ -84,7 +117,23 @@ public class MusicListenerService extends NotificationListenerService {
         }
     };
 
-    private final MediaController.Callback mMediaCallback = new MediaController.Callback() {
+    private Notification buildLrcNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_LRC);
+        builder.setSmallIcon(R.drawable.ic_music);
+        builder.setOngoing(true);
+        Notification notification = builder.build();
+        notification.extras.putLong("ticker_icon", R.drawable.ic_music);
+        notification.extras.putBoolean("ticker_icon_switch", false);
+        notification.flags |= Constants.FLAG_ALWAYS_SHOW_TICKER;
+        notification.flags |= Constants.FLAG_ONLY_UPDATE_TICKER;
+        return notification;
+    }
+
+    private void bindMediaListeners() {
+        ComponentName listener = new ComponentName(this, MusicListenerService.class);
+        mMediaSessionManager.addOnActiveSessionsChangedListener(onActiveSessionsChangedListener, listener);
+        onActiveSessionsChangedListener.onActiveSessionsChanged(mMediaSessionManager.getActiveSessions(listener));
+    }    private final MediaController.Callback mMediaCallback = new MediaController.Callback() {
         @Override
         public void onPlaybackStateChanged(@Nullable PlaybackState state) {
             super.onPlaybackStateChanged(state);
@@ -112,7 +161,22 @@ public class MusicListenerService extends NotificationListenerService {
         }
     };
 
-    private final MediaSessionManager.OnActiveSessionsChangedListener onActiveSessionsChangedListener = new MediaSessionManager.OnActiveSessionsChangedListener() {
+    private void unBindMediaListeners() {
+        if (mMediaSessionManager != null)
+            mMediaSessionManager.removeOnActiveSessionsChangedListener(onActiveSessionsChangedListener);
+        if (mMediaController != null) mMediaController.unregisterCallback(mMediaCallback);
+        mMediaController = null;
+    }
+
+    private void updateIgnoredPackageList() {
+        mIgnoredPackageList.clear();
+        String value = mSharedPreferences.getString(Constants.PREFERENCE_KEY_IGNORED_PACKAGES, "");
+        String[] arr = value.split(";");
+        for (String str : arr) {
+            if (TextUtils.isEmpty(str)) continue;
+            mIgnoredPackageList.add(str.trim());
+        }
+    }    private final MediaSessionManager.OnActiveSessionsChangedListener onActiveSessionsChangedListener = new MediaSessionManager.OnActiveSessionsChangedListener() {
         @Override
         public void onActiveSessionsChanged(@Nullable List<MediaController> controllers) {
             if (mMediaController != null) mMediaController.unregisterCallback(mMediaCallback);
@@ -132,81 +196,6 @@ public class MusicListenerService extends NotificationListenerService {
         }
     };
 
-    private int getMediaControllerPlaybackState(MediaController controller) {
-        if (controller != null) {
-            final PlaybackState playbackState = controller.getPlaybackState();
-            if (playbackState != null) {
-                return playbackState.getState();
-            }
-        }
-        return PlaybackState.STATE_NONE;
-    }
-
-    public MusicListenerService() {
-    }
-
-    @Override
-    public void onNotificationPosted(StatusBarNotification sbn) {
-    }
-
-    @Override
-    public void onNotificationRemoved(StatusBarNotification sbn) {
-    }
-
-    @Override
-    public void onListenerConnected() {
-        super.onListenerConnected();
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mLyricNotification = buildLrcNotification();
-        mMediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mIgnoredPackageReceiver, new IntentFilter(Constants.BROADCAST_IGNORED_APP_CHANGED));
-        updateIgnoredPackageList();
-        bindMediaListeners();
-    }
-
-    @Override
-    public void onListenerDisconnected() {
-        stopLyric();
-        unBindMediaListeners();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mIgnoredPackageReceiver);
-        super.onListenerDisconnected();
-    }
-
-    private Notification buildLrcNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_LRC);
-        builder.setSmallIcon(R.drawable.ic_music);
-        builder.setOngoing(true);
-        Notification notification = builder.build();
-        notification.extras.putLong("ticker_icon", R.drawable.ic_music);
-        notification.extras.putBoolean("ticker_icon_switch", false);
-        notification.flags |= Constants.FLAG_ALWAYS_SHOW_TICKER;
-        notification.flags |= Constants.FLAG_ONLY_UPDATE_TICKER;
-        return notification;
-    }
-
-    private void bindMediaListeners() {
-        ComponentName listener = new ComponentName(this, MusicListenerService.class);
-        mMediaSessionManager.addOnActiveSessionsChangedListener(onActiveSessionsChangedListener, listener);
-        onActiveSessionsChangedListener.onActiveSessionsChanged(mMediaSessionManager.getActiveSessions(listener));
-    }
-
-    private void unBindMediaListeners() {
-        if (mMediaSessionManager != null) mMediaSessionManager.removeOnActiveSessionsChangedListener(onActiveSessionsChangedListener);
-        if (mMediaController != null) mMediaController.unregisterCallback(mMediaCallback);
-        mMediaController = null;
-    }
-
-    private void updateIgnoredPackageList() {
-        mIgnoredPackageList.clear();
-        String value = mSharedPreferences.getString(Constants.PREFERENCE_KEY_IGNORED_PACKAGES, "");
-        String[] arr = value.split(";");
-        for (String str : arr) {
-            if (TextUtils.isEmpty(str)) continue;
-            mIgnoredPackageList.add(str.trim());
-        }
-    }
-
     private void startLyric() {
         mLastSentenceFromTime = -1;
         mLyricNotification.tickerText = null;
@@ -217,6 +206,7 @@ public class MusicListenerService extends NotificationListenerService {
     private void stopLyric() {
         mHandler.removeCallbacks(mLyricUpdateRunnable);
         mNotificationManager.cancel(NOTIFICATION_ID_LRC);
+        new StatusBarLyric(this, null, "io.baolong24.statuslyricext", false).stopLyric();
     }
 
     private void updateLyric(long position) {
@@ -228,6 +218,7 @@ public class MusicListenerService extends NotificationListenerService {
             mLyricNotification.when = System.currentTimeMillis();
             mNotificationManager.notify(NOTIFICATION_ID_LRC, mLyricNotification);
             mLastSentenceFromTime = sentence.fromTime;
+            new StatusBarLyric(this, null, "io.baolong24.statuslyricext", false).updateLyric(sentence.content);
         }
     }
 
@@ -256,4 +247,16 @@ public class MusicListenerService extends NotificationListenerService {
             handler.sendMessage(message);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
 }
