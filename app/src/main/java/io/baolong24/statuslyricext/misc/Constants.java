@@ -4,6 +4,7 @@ public class Constants {
     public static final String SHARED_PREFERENCES_NAME = "preferences";
 
     public static final String PREFERENCE_KEY_ENABLED = "enabled";
+    public static final String PREFERENCE_KEY_ENABLED_XPOSED = "enable_xposed";
     public static final String PREFERENCE_KEY_ABOUT = "about";
     public static final String PREFERENCE_KEY_IGNORED_PACKAGES = "ignored_packages";
 
