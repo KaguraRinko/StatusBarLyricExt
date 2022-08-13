@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">狀態欄歌詞擴充</string>
+    <string name="about_header">關於</string>
+    <string name="preferences_header">設定</string>
+    <string name="profile_choose_app">選擇應用程式</string>
+    <string name="dialog_delete_title">刪除</string>
+    <string name="dialog_delete_message">移除所選項目？</string>
+    <string name="add_package_to_title">增加應用程式</string>
+    <string name="enabled_title">開啟</string>
+    <string name="ignored_apps_title">忽略應用程式</string>
+    <string name="unsupport_rom">目前系統或 ROM 不支援</string>
+    <string name="unsupport_evolution">Android 12 的 Evolution X 不支援狀態欄歌詞</string>
+    <string name="unsupport">不支援</string>
+</resources>
