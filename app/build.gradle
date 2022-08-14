@@ -9,8 +9,8 @@ android {
         applicationId "io.baolong24.statuslyricext"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 3
-        versionName "1.0.5"
+        versionCode 4
+        versionName "1.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
