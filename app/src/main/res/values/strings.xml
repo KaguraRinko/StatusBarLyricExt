@@ -11,8 +11,5 @@
     <string name="about_header">About</string>
     <string name="enabled_title">Enabled</string>
     <string name="ignored_apps_title">Ignored apps</string>
-    <string name="unsupport_rom">Sorry, We don\'t support this system or ROM</string>
-    <string name="unsupport_evolution">Evolution X 12 didn\'t support statusbar lyric yet</string>
-    <string name="unsupport">Unsupport</string>
 
 </resources>

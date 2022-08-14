@@ -9,7 +9,4 @@
     <string name="add_package_to_title">增加應用程式</string>
     <string name="enabled_title">開啟</string>
     <string name="ignored_apps_title">忽略應用程式</string>
-    <string name="unsupport_rom">目前系統或 ROM 不支援</string>
-    <string name="unsupport_evolution">Android 12 的 Evolution X 不支援狀態欄歌詞</string>
-    <string name="unsupport">不支援</string>
 </resources>

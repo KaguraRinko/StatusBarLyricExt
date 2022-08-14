@@ -9,7 +9,4 @@
     <string name="add_package_to_title">添加应用</string>
     <string name="enabled_title">启用</string>
     <string name="ignored_apps_title">忽略应用</string>
-    <string name="unsupport_rom">当前系统或 ROM 不被支持</string>
-    <string name="unsupport_evolution">基于 Android 12 的 Evolution X 暂不支持状态栏歌词</string>
-    <string name="unsupport">不支持</string>
 </resources>
