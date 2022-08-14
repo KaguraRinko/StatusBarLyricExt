@@ -9,4 +9,6 @@
     <string name="add_package_to_title">添加应用</string>
     <string name="enabled_title">启用</string>
     <string name="ignored_apps_title">忽略应用</string>
+    <string name="unsupport_rom_summary">不支持当前 ROM</string>
+    <string name="unsupport_rom_title">不支持</string>
 </resources>

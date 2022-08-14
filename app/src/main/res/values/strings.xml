@@ -12,4 +12,8 @@
     <string name="enabled_title">Enabled</string>
     <string name="ignored_apps_title">Ignored apps</string>
 
+    <!-- Unsupport ROM -->
+    <string name="unsupport_rom_title">Unsupport</string>
+    <string name="unsupport_rom_summary">Sorry, We don\'t support this ROM</string>
+
 </resources>

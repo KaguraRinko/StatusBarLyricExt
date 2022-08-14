@@ -1,5 +1,6 @@
 package io.baolong24.statuslyricext;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ComponentName;
@@ -19,6 +20,7 @@ import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,11 +91,22 @@ public class SettingsActivity extends FragmentActivity {
     public static class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
 
         private SwitchPreference mEnabledPreference;
+        private int[] mNotificationFields = new int[2];
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
             mEnabledPreference = findPreference(Constants.PREFERENCE_KEY_ENABLED);
+            try {
+                mNotificationFields[0] =
+                        Notification.class.getDeclaredField("FLAG_ALWAYS_SHOW_TICKER").getInt(null);
+                mNotificationFields[1] =
+                        Notification.class.getDeclaredField("FLAG_ONLY_UPDATE_TICKER").getInt(null);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                mEnabledPreference.setEnabled(false);
+                mEnabledPreference.setTitle(R.string.unsupport_rom_title);
+                mEnabledPreference.setSummary(R.string.unsupport_rom_summary);
+            }
             if (mEnabledPreference != null) {
                 mEnabledPreference.setChecked(isNotificationListenerEnabled(getContext()));
                 mEnabledPreference.setOnPreferenceClickListener(this);
